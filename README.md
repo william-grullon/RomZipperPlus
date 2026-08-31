@@ -16,9 +16,11 @@ A Windows batch script that uses [7-Zip](https://www.7-zip.org/) to recursively 
    ```
 3. Double-click the script to run it
 
-The script will create a `ROMS compressed` subfolder with a matching subfolder for each system. Only `.nes`, `.gb`, `.gbc`, `.gg`, `.gba`, `.sfc`, `.smc`, `.md`, `.gen`, and `.nds` files are processed. Files in nested folders are also supported.
+The script will create a `ROMS compressed` subfolder and matching system subfolders only when that system has an archive to place there. System folders are processed in alphabetical order. Supported extensions are `.26`, `.a26`, `.z64`, `.nes`, `.gb`, `.gbc`, `.gg`, `.gba`, `.sfc`, `.smc`, `.md`, `.gen`, `.nds`, `.ngp`, `.pce`, `.32x`, `.sms`, `.vb`, `.ws`, and `.wsc`. Files in nested folders are also supported.
 
 The command window displays the current system, ROM being processed, and a progress bar for that system. Existing output archives are skipped. The final summary shows the number of ROMs found, archives created, failures, skipped archives, original size, compressed size, and total space saved in MB.
+
+To remove empty folders beneath the ROMs folder, double-click `RemoveEmptyFolders.bat`. It scans recursively and leaves the folder containing the script intact.
 
 ## Notes
 

@@ -4,6 +4,7 @@ setlocal EnableExtensions
 set "zipExe=C:\Program Files\7-Zip\7z.exe"
 set "COMPRESSION_LEVEL=5"
 set "romsDir=%~dp0"
+set "outputDirName=ROMS compressed"
 set "outputDir=%romsDir%ROMS compressed"
 set /a processed=0
 set /a succeeded=0
@@ -30,11 +31,11 @@ echo.
 
 pushd "%romsDir%"
 
-rem Process each immediate subfolder as a system folder.
-for /d %%S in (*) do (
-    if /I not "%%~fS"=="%outputDir%" (
-        echo Processing system: %%~nxS
-        call :processSystem "%%~fS" "%%~nxS"
+rem Process immediate subfolders in alphabetical order.
+for /f "delims=" %%S in ('dir /b /ad /on') do (
+    if /I not "%%S"=="%outputDirName%" (
+        echo Processing system: %%S
+        call :processSystem "%romsDir%%%S" "%%S"
         echo.
     )
 )
@@ -63,6 +64,7 @@ set "archivePath=%~2\%~n1.zip"
 set /a processed+=1
 set /a systemCurrent+=1
 if exist "%archivePath%" goto :alreadyCompressed
+if not exist "%~2" mkdir "%~2"
 echo   Compressing: "%~nx1"
 "%zipExe%" a -tzip -mx=%COMPRESSION_LEVEL% "%archivePath%" "%~1"
 if errorlevel 1 (
@@ -74,6 +76,7 @@ if errorlevel 1 (
     set /a compressedBytes+=compressedSize
     set /a spaceSaved+=originalSize-compressedSize
     set /a succeeded+=1
+    set /a systemArchives+=1
     echo   Complete: "%~n1.zip"
 )
 call :showProgress %%systemCurrent%% %%systemTotal%%
@@ -81,6 +84,7 @@ exit /b
 
 :alreadyCompressed
 set /a skipped+=1
+set /a systemArchives+=1
 echo   Skipped (already exists): "%~n1.zip"
 call :showProgress %%systemCurrent%% %%systemTotal%%
 exit /b
@@ -90,11 +94,14 @@ set "systemDir=%~1"
 set "systemOutput=%outputDir%\%~2"
 set /a systemTotal=0
 set /a systemCurrent=0
-if not exist "%systemOutput%" mkdir "%systemOutput%"
+set /a systemArchives=0
 
 rem Count supported cartridge ROM files for the progress bar.
 for /r "%systemDir%" %%F in (*) do (
     if /I "%%~xF"==".nes" set /a systemTotal+=1
+    if /I "%%~xF"==".26" set /a systemTotal+=1
+    if /I "%%~xF"==".a26" set /a systemTotal+=1
+    if /I "%%~xF"==".z64" set /a systemTotal+=1
     if /I "%%~xF"==".gb" set /a systemTotal+=1
     if /I "%%~xF"==".gbc" set /a systemTotal+=1
     if /I "%%~xF"==".gg" set /a systemTotal+=1
@@ -104,14 +111,24 @@ for /r "%systemDir%" %%F in (*) do (
     if /I "%%~xF"==".md" set /a systemTotal+=1
     if /I "%%~xF"==".gen" set /a systemTotal+=1
     if /I "%%~xF"==".nds" set /a systemTotal+=1
+    if /I "%%~xF"==".ngp" set /a systemTotal+=1
+    if /I "%%~xF"==".pce" set /a systemTotal+=1
+    if /I "%%~xF"==".32x" set /a systemTotal+=1
+    if /I "%%~xF"==".sms" set /a systemTotal+=1
+    if /I "%%~xF"==".vb" set /a systemTotal+=1
+    if /I "%%~xF"==".ws" set /a systemTotal+=1
+    if /I "%%~xF"==".wsc" set /a systemTotal+=1
 )
 echo   Supported ROMs: %systemTotal%
 
-if %systemTotal% EQU 0 exit /b
+if %systemTotal% EQU 0 goto :cleanupSystem
 
 rem Process supported cartridge ROM files.
 for /r "%systemDir%" %%F in (*) do (
     if /I "%%~xF"==".nes" call :compress "%%~fF" "%systemOutput%"
+    if /I "%%~xF"==".26" call :compress "%%~fF" "%systemOutput%"
+    if /I "%%~xF"==".a26" call :compress "%%~fF" "%systemOutput%"
+    if /I "%%~xF"==".z64" call :compress "%%~fF" "%systemOutput%"
     if /I "%%~xF"==".gb" call :compress "%%~fF" "%systemOutput%"
     if /I "%%~xF"==".gbc" call :compress "%%~fF" "%systemOutput%"
     if /I "%%~xF"==".gg" call :compress "%%~fF" "%systemOutput%"
@@ -121,7 +138,17 @@ for /r "%systemDir%" %%F in (*) do (
     if /I "%%~xF"==".md" call :compress "%%~fF" "%systemOutput%"
     if /I "%%~xF"==".gen" call :compress "%%~fF" "%systemOutput%"
     if /I "%%~xF"==".nds" call :compress "%%~fF" "%systemOutput%"
+    if /I "%%~xF"==".ngp" call :compress "%%~fF" "%systemOutput%"
+    if /I "%%~xF"==".pce" call :compress "%%~fF" "%systemOutput%"
+    if /I "%%~xF"==".32x" call :compress "%%~fF" "%systemOutput%"
+    if /I "%%~xF"==".sms" call :compress "%%~fF" "%systemOutput%"
+    if /I "%%~xF"==".vb" call :compress "%%~fF" "%systemOutput%"
+    if /I "%%~xF"==".ws" call :compress "%%~fF" "%systemOutput%"
+    if /I "%%~xF"==".wsc" call :compress "%%~fF" "%systemOutput%"
 )
+
+:cleanupSystem
+if %systemArchives% EQU 0 rmdir "%systemOutput%" 2>nul
 exit /b
 
 :showProgress
