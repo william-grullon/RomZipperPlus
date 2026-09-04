@@ -20,6 +20,8 @@ Compared with the original main version, Rom Zipper Plus adds:
 
 The original version compresses all files in a single folder. Rom Zipper Plus is designed for an organized ROM collection with separate system folders.
 
+These changes were made for my own ROM-management workflow. If you have feedback or ideas for improvement, please email [hello@williamgrullon.com](mailto:hello@williamgrullon.com).
+
 ## Requirements
 
 - Windows
