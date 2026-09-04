@@ -1,6 +1,24 @@
-# RomZipper
+# Rom Zipper Plus
 
-A Windows batch script that uses [7-Zip](https://www.7-zip.org/) to recursively compress supported cartridge ROMs from system subfolders into individual `.zip` archives.
+A feature-enhanced fork of the original [RomZipper](https://github.com/ItsRetroPup/RomZipper). Rom Zipper Plus uses [7-Zip](https://www.7-zip.org/) to recursively compress supported cartridge ROMs from system subfolders into individual `.zip` archives.
+
+## What is different from the original?
+
+Compared with the original main version, Rom Zipper Plus adds:
+
+- Top-level ROM folder support with one subfolder per system
+- Recursive scanning of nested system folders
+- Alphabetical system-folder processing
+- A supported ROM extension filter, so unrelated files are ignored
+- Support for Atari 2600, Game Gear, Nintendo 64, Neo Geo Pocket, PC Engine, Sega 32X, Sega Master System, Virtual Boy, WonderSwan, and WonderSwan Color formats, in addition to the original systems
+- Compression level 5 by default for a balance between speed and archive size
+- Existing-archive detection, so previously compressed ROMs are skipped
+- Live system and ROM status messages with a per-system progress bar
+- Final results showing created, failed, and skipped archives plus size savings in MB
+- Output folders created only for systems that contain archives
+- `RemoveEmptyFolders.bat` for cleaning empty folders beneath the ROMs directory
+
+The original version compresses all files in a single folder. Rom Zipper Plus is designed for an organized ROM collection with separate system folders.
 
 ## Requirements
 
